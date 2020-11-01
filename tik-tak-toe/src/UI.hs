@@ -66,7 +66,12 @@ boardPicture :: Board -> Picture
 boardPicture board = pictures $ [ boardGridPicture (boardSize board), cellsPicture board, cellsPicture board]
 
 gameOverPicture :: Maybe Player -> Board -> Picture 
-gameOverPicture win board = color (greyN 0.5) (boardPicture board)
+gameOverPicture win board = color chooseOverColor (boardPicture board)
+  where
+    chooseOverColor = case win of
+      Just OPlayer -> green
+      Just XPlayer -> blue
+      Nothing      -> greyN 0.5
 
 runningPicture :: Board -> Picture 
 runningPicture board = pictures [boardGridPicture (boardSize board), cellsPicture board, cellsPicture board]

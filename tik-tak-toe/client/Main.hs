@@ -4,6 +4,6 @@ import Client
 
 main :: IO ()
 main = do
-  putStrLn "insert field size"
+  putStrLn "field size: "
   n <- readLn :: IO Int
   initClient n
