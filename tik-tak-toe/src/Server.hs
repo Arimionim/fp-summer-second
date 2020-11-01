@@ -46,6 +46,7 @@ proceedMove game = case gamePlayer game of
 
 initializeGame :: Int -> Handler Field
 initializeGame n = do
+  liftIO $ putStrLn "player entered"
   rand <- liftIO $ randMode
   return $ botMove $ initialState n rand
 
@@ -104,16 +105,16 @@ countCells cell = length . filter ((==) cell)
 findCell :: Board -> (Int, Int) -> Maybe Int
 findCell board (x, y) =
   if x == boardSize board
-  then findCell board (y + 1, 0)
+  then findCell board (0, y + 1)
   else 
     if y == boardSize board
-    then findCell board (0, 0)
+    then Nothing
     else 
       let cells = boardCells board
           n     = boardSize  board in
         if cells !! (x * n + y) == Empty
         then Just $ x * boardSize board + y
-        else findCell board (x, y + 1)
+        else findCell board (x + 1, y)
 
 botMove :: Field -> Field
 botMove game =
