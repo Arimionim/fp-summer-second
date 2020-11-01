@@ -27,6 +27,7 @@ dependencies:
 - random
 - servant-server
 - warp
+- hspec
 
 library:
   source-dirs: src

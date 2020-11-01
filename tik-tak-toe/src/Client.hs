@@ -69,7 +69,7 @@ checkIfSomeOneWon (cell@(Full player):cells) =
 checkIfSomeOneWon _ = Nothing
 
 getWinner :: Board -> Maybe Player
-getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> diags1 <> diags2'
+getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> dgs1 <> dgs2'
   where
     n = boardSize board
     cells = boardCells board
@@ -80,15 +80,15 @@ getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> diags1 <> diags
     cols  = concat [[[cells !! ((i + q) * n + j) | q <- [0..len-1]]
                                                  | i <- [0..n-len]]
                                                  | j <- [0..n-1]]
-    diags1 = concat [[[cells !! ((i + q) * n + j + q) | q <- [0..len-1]]
+    dgs1 = concat [[[cells !! ((i + q) * n + j + q) | q <- [0..len-1]]
                                                       | i <- [0..n-len]]
                                                       | j <- [0..n-len]]
-    diags2 =
+    dgs2 =
       concat [[[if j >= q && n-1-i+q < n then (n - 1 - i + q) * n + j - q else -1
                                                       | q <- [0..len-1]]
                                                       | i <- [0..n-1]]
                                                       | j <- [0..n-1]]
-    diags2' = map (\a -> map (cells !!) a) $ filter (\a -> not $ elem (-1 :: Int) a) diags2
+    dgs2' = map (\a -> map (cells !!) a) $ filter (\a -> not $ elem (-1 :: Int) a) dgs2
 
 countCells :: Cell -> [Cell] -> Int
 countCells cell = length . filter ((==) cell)

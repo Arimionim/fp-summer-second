@@ -5,6 +5,7 @@
 module Server
   ( botMove
   , getWinner
+  , checkCell
   , startServer
   ) where
 
@@ -78,7 +79,7 @@ checkIfSomeOneWon (cell@(Full player):cells) =
 checkIfSomeOneWon _ = Nothing
 
 getWinner :: Board -> Maybe Player 
-getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> diags1 <> diags2
+getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> dgs1 <> dgs2
   where 
     n = boardSize board
     cells = boardCells board
@@ -89,18 +90,21 @@ getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> diags1 <> diags
     cols  = concat [[[cells !! ((i + q) * n + j) | q <- [0..len-1]]
                                                  | i <- [0..n-len]]
                                                  | j <- [0..n-1]]
-    diags1 = concat [[[cells !! ((i + q) * n + j + q) | q <- [0..len-1]]
+    dgs1 = concat [[[cells !! ((i + q) * n + j + q) | q <- [0..len-1]]
                                                       | i <- [0..n-len]]
                                                       | j <- [0..n-len]]
-    diags2 = map (\a -> map (cells !!) a) $ filter (\a -> not $ elem (-1 :: Int) a) diags2Helper
+    dgs2 = map (\a -> map (cells !!) a) $ filter (\a -> not $ elem (-1 :: Int) a) dgs2Helper
 
-    diags2Helper = concat [[[if j >= q && n-1-i+q < n then (n - 1 - i + q) * n + j - q else -1
+    dgs2Helper = concat [[[if j >= q && n-1-i+q < n then (n - 1 - i + q) * n + j - q else -1
                                                       | q <- [0..len-1]]
                                                       | i <- [0..n-1]]
                                                       | j <- [0..n-1]]
 
 countCells :: Cell -> [Cell] -> Int
 countCells cell = length . filter ((==) cell)
+
+checkCell :: [Cell] -> (Int, Int) -> Int -> Bool
+checkCell cells (x, y) n = (cells !! (x * n + y) == Empty)
 
 findCell :: Board -> (Int, Int) -> Maybe Int
 findCell board (x, y) =
@@ -112,7 +116,7 @@ findCell board (x, y) =
     else 
       let cells = boardCells board
           n     = boardSize  board in
-        if cells !! (x * n + y) == Empty
+        if checkCell cells (x, y) n
         then Just $ x * boardSize board + y
         else findCell board (x + 1, y)
 

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 718c9abbfa0f947b87474e8ed82885c15756d869d210539e15b48670a3cf120b
+-- hash: d4f7b79efb4f21064ba70cd93cbe689b6155883070ffae3b2af2545ab9527218
 
 name:           tik-tak-toe
 version:        0.1.0.0
@@ -39,6 +39,7 @@ library
       aeson
     , base >=4.7 && <5
     , gloss
+    , hspec
     , http-conduit
     , random
     , servant-server
@@ -56,6 +57,7 @@ executable tik-tak-toe-client
       aeson
     , base >=4.7 && <5
     , gloss
+    , hspec
     , http-conduit
     , random
     , servant-server
@@ -74,6 +76,7 @@ executable tik-tak-toe-server
       aeson
     , base >=4.7 && <5
     , gloss
+    , hspec
     , http-conduit
     , random
     , servant-server
@@ -93,6 +96,7 @@ test-suite tik-tak-toe-test
       aeson
     , base >=4.7 && <5
     , gloss
+    , hspec
     , http-conduit
     , random
     , servant-server
