@@ -69,26 +69,39 @@ check (cell@(Full player):cells) =
 check _ = Nothing
 
 getWinner :: Board -> Maybe Player
-getWinner board = asum $ map check $ rows <> cols <> dgs1 <> dgs2'
+getWinner board = helper (0, 0)
   where
     n = boardSize board
     cells = boardCells board
-    len = min n 5
-    rows  = concat [[[cells !! (i * n + j + q) | q <- [0..len-1]]
-                                               | i <- [0..n-1]]
-                                               | j <- [0..n-len]]
-    cols  = concat [[[cells !! ((i + q) * n + j) | q <- [0..len-1]]
-                                                 | i <- [0..n-len]]
-                                                 | j <- [0..n-1]]
-    dgs1 = concat [[[cells !! ((i + q) * n + j + q) | q <- [0..len-1]]
-                                                      | i <- [0..n-len]]
-                                                      | j <- [0..n-len]]
-    dgs2 =
-      concat [[[if j >= q && n-1-i+q < n then (n - 1 - i + q) * n + j - q else -1
-                                                      | q <- [0..len-1]]
-                                                      | i <- [0..n-1]]
-                                                      | j <- [0..n-1]]
-    dgs2' = map (\a -> map (cells !!) a) $ filter (\a -> not $ elem (-1 :: Int) a) dgs2
+    helper :: (Int, Int) -> Maybe Player
+    helper (x, y) =
+                    if x == n
+                    then helper (0, y + 1)
+                    else
+                      if y == n
+                      then Nothing
+                      else
+                        if checkWinner (x - 1, y - 1) (x, y) (x + 1, y + 1)
+                            || checkWinner (x - 1, y) (x, y) (x + 1, y)
+                            || checkWinner (x - 1, y + 1) (x, y) (x + 1, y - 1)
+                            || checkWinner (x, y - 1) (x, y) (x, y + 1)
+                        then
+                            case (cells !! (x * n + y)) of
+                                Empty -> Nothing
+                                Full player -> Just player
+
+                        else helper (x + 1, y)
+    checkWinner :: (Int, Int) -> (Int, Int) -> (Int, Int) -> Bool
+    checkWinner (x1, y1) (x2, y2) (x3, y3) =
+        if not (checkCoords n (x1, y1))
+            || not (checkCoords n (x2, y2))
+            || not (checkCoords n (x3, y3))
+        then
+          False
+        else
+          (cells !! (x1 * n + y1)) == (cells !! (x2 * n + y2))
+          && (cells !! (x2 * n + y2)) == (cells !! (x3 * n + y3))
+          && (cells !! (x2 * n + y2)) /= Empty
 
 countCells :: Cell -> [Cell] -> Int
 countCells cell = length . filter ((==) cell)
