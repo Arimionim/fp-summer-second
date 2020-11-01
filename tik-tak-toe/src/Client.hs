@@ -61,15 +61,15 @@ proceedMove game = case gamePlayer game of
   OPlayer -> game {gamePlayer = XPlayer}
   XPlayer -> game {gamePlayer = OPlayer}
 
-checkIfSomeOneWon :: [Cell] -> Maybe Player
-checkIfSomeOneWon (cell@(Full player):cells) =
+check :: [Cell] -> Maybe Player
+check (cell@(Full player):cells) =
   if all (== cell) cells
   then Just player
   else Nothing
-checkIfSomeOneWon _ = Nothing
+check _ = Nothing
 
 getWinner :: Board -> Maybe Player
-getWinner board = asum $ map checkIfSomeOneWon $ rows <> cols <> dgs1 <> dgs2'
+getWinner board = asum $ map check $ rows <> cols <> dgs1 <> dgs2'
   where
     n = boardSize board
     cells = boardCells board
